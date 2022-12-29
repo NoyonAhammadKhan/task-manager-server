@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { query } = require('express');
 require('dotenv').config()
 
 
@@ -35,17 +36,28 @@ async function run() {
         
         app.get('/mytasks/:email', async (req, res) => {
             const email=req.params.email;
-            const query = {userEmail:email,completeStatus:'Not Completed'}
+            const query = {userEmail:email,completeStatus:'notcompleted'}
             const result = await tasksCollection.find(query).toArray();
             res.send(result);
         })
         app.get('/completedtasks/:email', async (req, res) => {
             const email=req.params.email;
-            const query = {userEmail:email,completeStatus:'Completed'}
+            const query = {userEmail:email,completeStatus:'completed'}
             const result = await tasksCollection.find(query).toArray();
             res.send(result);
         })
-
+        app.patch('/tasks/completed/:id',async(req,res)=>{
+            const id=req.params.id;
+            const completeStatus=req.body.completeStatus;
+            const query={_id:ObjectId(id)}
+            const updatedDoc={
+                $set:{
+                    completeStatus:completeStatus
+                }
+            }
+            const result=await tasksCollection.updateOne(query,updatedDoc);
+            res.send(result);
+        })
         app.delete('/tasks/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
