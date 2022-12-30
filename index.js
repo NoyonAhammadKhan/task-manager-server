@@ -94,7 +94,18 @@ async function run() {
             const result = await tasksCollection.updateOne(query, updatedDoc);
             res.send(result);
         })
-
+        app.patch('/tasks/comment/:id', async(req,res)=>{
+            const id = req.params.id;
+            const comment= req.body.comment;
+            const query={_id:ObjectId(id)}
+            const updatedDoc ={
+                $set:{
+                    comment:comment
+                }
+            }
+            const result = await tasksCollection.updateOne(query, updatedDoc);
+            res.send(result);
+        })
    
 
         
