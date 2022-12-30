@@ -31,7 +31,12 @@ async function run() {
             const result = await tasksCollection.insertOne(task);
             res.send(result)
         })
-
+        app.get('/tasks/:id',async(req,res)=>{
+            const id = req.params.id;
+            const query={_id:ObjectId(id)}
+            const result=await tasksCollection.findOne(query);
+            res.send(result);
+        })
 
         
         app.get('/mytasks/:email', async (req, res) => {
@@ -65,20 +70,30 @@ async function run() {
             res.send(result);
         })
 
-        app.get()
+        
 
-        app.put('/tasks/:id', async (req, res) => {
+        app.patch('/tasks/:id', async (req, res) => {
             const id = req.params.id;
-            const filter = { _id: ObjectId(id) }
-            const options = { upsert: true };
+            // const status = req.body.status;
+            const taskName=req.body.taskName;
+            const taskDetails = req.body.taskDetails;
+            const taskImage = req.body.taskImage;
+            const userEmail = req.body.userEmail;
+            const completeStatus = req.body.completeStatus;
+            const query = { _id: ObjectId(id) }
             const updatedDoc = {
-                $set: {
-                    role: 'admin'
+                $set:{
+                     taskName:taskName,
+                     taskDetails:taskDetails,
+                     taskImage:taskImage,
+                     userEmail:userEmail,
+                     completeStatus:completeStatus
+        
                 }
             }
-            const result = await usersCollection.updateOne(filter, updatedDoc, options);
+            const result = await tasksCollection.updateOne(query, updatedDoc);
             res.send(result);
-        });
+        })
 
    
 
